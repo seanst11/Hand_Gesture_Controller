@@ -120,7 +120,7 @@ def main():
 
     # ========= 按鍵前置作業 =========
     mode = 0
-    presstime = presstime_2 = presstime_3 = presstime_4 = time.time()
+    presstime = presstime_2 = presstime_3 = presstime_4 = resttime = time.time()
 
     detect_mode = 2
     what_mode = 'mouse'
@@ -177,15 +177,24 @@ def main():
             rest_id = 1
             rest_result.append(rest_id)
         most_common_rest_result = Counter(rest_result).most_common()
+
+        # old version for 10 sec to rest mode####################
         #print(most_common_rest_result[0])
-        if most_common_rest_result[0][0] == 0 and most_common_rest_result[0][1] == 300:
+        # if most_common_rest_result[0][0] == 0 and most_common_rest_result[0][1] == 300:
+        #     if detect_mode != 0:
+        #
+        #         print('Mode has changed')
+        #         detect_mode = 0
+        #         what_mode = 'Rest'
+        #         print(f'Current mode => {what_mode}')
+
+        # new version for 10 sec to rest mode###################
+        if time.time() - resttime > 10:
             if detect_mode != 0:
-                
-                print('Mode has changed 2')
                 detect_mode = 0
                 what_mode = 'Rest'
                 print(f'Current mode => {what_mode}')
-            
+
         ####rest_result####
         
         
@@ -271,6 +280,7 @@ def main():
                     keypoint_classifier_labels[most_common_keypoint_id[0][0]],
                     point_history_classifier_labels[most_common_fg_id[0][0]],
                 )
+                resttime = time.time()
         else:
             point_history.append([0, 0])
 
