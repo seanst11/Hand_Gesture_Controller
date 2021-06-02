@@ -7,7 +7,7 @@ import tensorflow as tf
 class MouseClassifier(object):
     def __init__(
             self,
-            model_path='model/mouse_classifier/mouse_classifier_extra1_add6_nogood.tflite',
+            model_path='model/mouse_classifier/mouse_classifier_final1.tflite',
             num_threads=1,
             score_th=0.5,
             invalid_value=2,

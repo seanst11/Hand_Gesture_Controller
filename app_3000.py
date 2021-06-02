@@ -344,10 +344,6 @@ def main():
                             i += 1
                             presstime_4 = time.time()
 
-                    # speed up gesture
-                    # if most_common_keypoint_id[0][0] == 0 and most_common_keypoint_id[0][1] == 5:
-                    #     if keyboard_TF:
-                    #         pyautogui.press('right')
                     # 動態手勢控制
                     if most_common_fg_id[0][0] == 1 and most_common_fg_id[0][1] > 12:
                         if time.time() - presstime_3 > 1.5:
@@ -362,10 +358,6 @@ def main():
                             print('speed down')
                             presstime_3 = time.time()
 
-
-                    # print(most_common_fg_id)
-                    # print(most_common_fg_id[0][0], most_common_fg_id[0][1])
-                    # print(time.time() - presstime_3 > 1)
 
             if detect_mode == 2:
                 if mouse_id == 0:  # Point gesture
