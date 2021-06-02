@@ -8,8 +8,11 @@ import os
 import time
 import math
 
+
 from collections import Counter
 from collections import deque
+from gtts import gTTS
+from playsound import playsound
 
 import cv2 as cv
 import numpy as np
@@ -139,6 +142,14 @@ def main():
     #關閉 滑鼠移至角落啟動保護措施
     pyautogui.FAILSAFE = False
 
+    # ========= google 小姐 =========
+    speech_0 = gTTS(text="スリープモード", lang='ja')
+    speech_0.save('rest.mp3')
+    speech_0 = gTTS(text="キーボードモード", lang='ja')
+    speech_0.save('keyboard.mp3')
+    speech = gTTS(text="マウスモード", lang='ja')
+    speech.save('mouse.mp3')
+
     # ===============================
     i = 0
     finger_gesture_id = 0
@@ -193,7 +204,7 @@ def main():
         if time.time() - resttime > 10:
             if detect_mode != 0:
                 detect_mode = 0
-                what_mode = 'Rest'
+                what_mode = 'Sleep'
                 print(f'Current mode => {what_mode}')
 
         ####rest_result####
@@ -296,9 +307,15 @@ def main():
                 if most_common_ms_id[0][0] == 3 and most_common_ms_id[0][1] == 40: #Gesture six changes to the different mode
                     print('Mode has changed')
                     detect_mode = (detect_mode + 1) % 3
-                    if detect_mode == 0: what_mode = 'Rest'
-                    if detect_mode == 1: what_mode = 'Keyboard'
-                    if detect_mode == 2: what_mode = 'Mouse'
+                    if detect_mode == 0:
+                        what_mode = 'Sleep'
+                        playsound('rest.mp3', block=False)
+                    if detect_mode == 1:
+                        what_mode = 'Keyboard'
+                        playsound('keyboard.mp3', block=False)
+                    if detect_mode == 2:
+                        what_mode = 'Mouse'
+                        playsound('mouse.mp3', block=False)
                     print(f'Current mode => {what_mode}')
                     presstime = time.time() + 1
 
