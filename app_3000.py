@@ -113,6 +113,7 @@ def main():
     # result deque
     rest_length = 300
     rest_result = deque(maxlen=rest_length)
+    speed_up_count = deque(maxlen=3)
     
     # ========= 使用者自訂姿勢、指令區 =========
     # time.sleep(0.5)
@@ -120,7 +121,7 @@ def main():
 
     # ========= 按鍵前置作業 =========
     mode = 0
-    presstime = presstime_2 = presstime_3 = presstime_4 = resttime = time.time()
+    presstime = presstime_2 = presstime_3 = resttime = presstime_4 = time.time()
 
     detect_mode = 2
     what_mode = 'mouse'
@@ -136,7 +137,7 @@ def main():
     mousespeed = 1.5
     clicktime = time.time()
     #關閉 滑鼠移至角落啟動保護措施
-    #pyautogui.FAILSAFE = False
+    pyautogui.FAILSAFE = False
 
     # ===============================
     i = 0
@@ -300,22 +301,53 @@ def main():
                     if detect_mode == 2: what_mode = 'Mouse'
                     print(f'Current mode => {what_mode}')
                     presstime = time.time() + 1
-                    presstime_4 = time.time()
 
                 # control keyboard
                 elif detect_mode == 1:
                     if time.time() - presstime_2 > 1:
-                        if time.time() - presstime_4 > 1:
-                            # 靜態手勢控制
-                            control_keyboard(most_common_keypoint_id, 2, 'K', keyboard_TF=True, print_TF=False)
-                            control_keyboard(most_common_keypoint_id, 0, 'right', keyboard_TF=True, print_TF=False)
-                            control_keyboard(most_common_keypoint_id, 7, 'left', keyboard_TF=True, print_TF=False)
-                            control_keyboard(most_common_keypoint_id, 9, 'C', keyboard_TF=True, print_TF=False)
-                            control_keyboard(most_common_keypoint_id, 5, 'up', keyboard_TF=True, print_TF=False)
-                            control_keyboard(most_common_keypoint_id, 6, 'down', keyboard_TF=True, print_TF=False)
-                            presstime_2 = time.time()
-                            # print(time.time() - presstime_4 > 1)
+                        # 靜態手勢控制
+                        control_keyboard(most_common_keypoint_id, 2, 'K', keyboard_TF=True, print_TF=False)
+                        # control_keyboard(most_common_keypoint_id, 0, 'right', keyboard_TF=True, print_TF=False)
+                        # control_keyboard(most_common_keypoint_id, 7, 'left', keyboard_TF=True, print_TF=False)
+                        control_keyboard(most_common_keypoint_id, 9, 'C', keyboard_TF=True, print_TF=False)
+                        control_keyboard(most_common_keypoint_id, 5, 'up', keyboard_TF=True, print_TF=False)
+                        control_keyboard(most_common_keypoint_id, 6, 'down', keyboard_TF=True, print_TF=False)
+                        presstime_2 = time.time()
 
+                    # right右鍵
+                    if most_common_keypoint_id[0][0] == 0 and most_common_keypoint_id[0][1] == 5:
+                        # print(i, time.time() - presstime_4)
+                        if i == 3 and time.time() - presstime_4 > 0.3:
+                            pyautogui.press('right')
+                            i = 0
+                            presstime_4 = time.time()
+                        elif i == 3 and time.time() - presstime_4 > 0.25:
+                            pyautogui.press('right')
+                            presstime_4 = time.time()
+                        elif time.time() - presstime_4 > 1:
+                            pyautogui.press('right')
+                            i += 1
+                            presstime_4 = time.time()
+
+                    # left左鍵
+                    if most_common_keypoint_id[0][0] == 7 and most_common_keypoint_id[0][1] == 5:
+                        # print(i, time.time() - presstime_4)
+                        if i == 3 and time.time() - presstime_4 > 0.3:
+                            pyautogui.press('left')
+                            i = 0
+                            presstime_4 = time.time()
+                        elif i == 3 and time.time() - presstime_4 > 0.25:
+                            pyautogui.press('left')
+                            presstime_4 = time.time()
+                        elif time.time() - presstime_4 > 1:
+                            pyautogui.press('left')
+                            i += 1
+                            presstime_4 = time.time()
+
+                    # speed up gesture
+                    # if most_common_keypoint_id[0][0] == 0 and most_common_keypoint_id[0][1] == 5:
+                    #     if keyboard_TF:
+                    #         pyautogui.press('right')
                     # 動態手勢控制
                     if most_common_fg_id[0][0] == 1 and most_common_fg_id[0][1] > 12:
                         if time.time() - presstime_3 > 1.5:
@@ -696,12 +728,38 @@ def draw_info(image, fps, mode, number):
     return image
 
 
-def control_keyboard(most_common_keypoint_id, select_right_id, command, keyboard_TF=True, print_TF=True):
-    if most_common_keypoint_id[0][0] == select_right_id and most_common_keypoint_id[0][1] == 5:
-        if keyboard_TF:
-            pyautogui.press(command)
-        if print_TF:
-            print(command)
+def control_keyboard(most_common_keypoint_id, select_right_id, command, keyboard_TF=True, print_TF=True, speed_up=False):
+    if speed_up == False:
+        if most_common_keypoint_id[0][0] == select_right_id and most_common_keypoint_id[0][1] == 5:
+            if keyboard_TF:
+                pyautogui.press(command)
+            if print_TF:
+                print(command)
+    if speed_up == True:
+        if most_common_keypoint_id[0][0] == 0 and most_common_keypoint_id[0][1] == 5:
+            print(i, time.time() - presstime_4)
+            if i == 3 and time.time() - presstime_4 > 0.3:
+                pyautogui.press('right')
+                i = 0
+                presstime_4 = time.time()
+            elif i == 3 and time.time() - presstime_4 > 0.25:
+                pyautogui.press('right')
+                presstime_4 = time.time()
+            elif time.time() - presstime_4 > 1:
+                pyautogui.press('right')
+                i += 1
+                presstime_4 = time.time()
+        # if speed_up == True:
+        #     i += 1
+        #     if i > 3:
+        #         pyautogui.press(command)
+        #         pyautogui.press(command)
+        #         pyautogui.press(command)
+
+
+
+
+
     # print(most_common_keypoint_id)
     # elif select_left_id == -1:
     #     if right_id == -1 and left_id == select_right_id:
