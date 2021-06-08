@@ -89,12 +89,26 @@ class MainWindow(QMainWindow):
         self.runButton.setGeometry(10, 10, 40, 20)
         self.work = WorkThread()
         self.runButton.clicked.connect(self.execute)
+        self.check_worked = False
 
     def execute(self):
         # 启动线程
-        self.work.start()
-        # 线程自定义信号连接的槽函数
-        self.work.trigger.connect(self.display)
+        if self.check_worked == False:
+            self.check_worked = True
+            self.work.start()
+            # 线程自定义信号连接的槽函数
+            self.work.trigger.connect(self.display)
+            self.runButton.setText('Stop')
+            self.centralwidget.setStyleSheet(
+                """
+                background:rgb(255, 200, 255);
+                border-radius:{0}px;
+                """.format(self.radius))
+
+        else:
+            self.check_worked = False
+            self.work.stop()
+            self.runButton.setText('Run')
 
     def display(self, int):
         # 由于自定义信号时自动传递一个字符串参数，所以在这个槽函数中要接受一个参数
@@ -131,7 +145,7 @@ class MainWindow(QMainWindow):
         exit_option = menu.addAction('Exit')
 
         # Menu option events
-        exit_option.triggered.connect(lambda: exit())
+        exit_option.triggered.connect(lambda: sys.exit())
 
         # Position
         menu.exec_(self.mapToGlobal(pos))
@@ -575,8 +589,13 @@ class WorkThread(QThread):
     def __int__(self):
         # 初始化函数
         super(WorkThread, self).__init__()
+        self.stop_flag = False
+
+    def stop(self):
+        self.stop_flag = True
 
     def run(self):
+        self.stop_flag = False
         # Argument parsing #################################################################
         args = get_args()
 
@@ -669,19 +688,19 @@ class WorkThread(QThread):
         pyautogui.FAILSAFE = False
 
         # ========= google 小姐 =========
-        speech_0 = gTTS(text="スリープモード", lang='ja')
-        speech_0.save('rest.mp3')
-        speech_0 = gTTS(text="キーボードモード", lang='ja')
-        speech_0.save('keyboard.mp3')
-        speech = gTTS(text="マウスモード", lang='ja')
-        speech.save('mouse.mp3')
+        # speech_0 = gTTS(text="スリープモード", lang='ja')
+        # speech_0.save('rest.mp3')
+        # speech_0 = gTTS(text="キーボードモード", lang='ja')
+        # speech_0.save('keyboard.mp3')
+        # speech = gTTS(text="マウスモード", lang='ja')
+        # speech.save('mouse.mp3')
 
         # ===============================
         i = 0
         finger_gesture_id = 0
 
         # ========= 主程式運作 =========
-        while True:
+        while self.stop_flag == False:
             left_id = right_id = -1
             fps = cvFpsCalc.get()
 
