@@ -82,6 +82,11 @@ class MainWindow(QMainWindow):
             # 线程自定义信号连接的槽函数
             self.work.trigger.connect(self.display)
             self.runButton.setText('Stop')
+            self.centralwidget.setStyleSheet(
+                """
+                background:rgb(255, 200, 255);
+                border-radius:{0}px;
+                """.format(self.radius))
 
         else:
             self.check_worked = False
@@ -252,12 +257,12 @@ class WorkThread(QThread):
         pyautogui.FAILSAFE = False
 
         # ========= google 小姐 =========
-        speech_0 = gTTS(text="スリープモード", lang='ja')
-        speech_0.save('rest.mp3')
-        speech_0 = gTTS(text="キーボードモード", lang='ja')
-        speech_0.save('keyboard.mp3')
-        speech = gTTS(text="マウスモード", lang='ja')
-        speech.save('mouse.mp3')
+        # speech_0 = gTTS(text="スリープモード", lang='ja')
+        # speech_0.save('rest.mp3')
+        # speech_0 = gTTS(text="キーボードモード", lang='ja')
+        # speech_0.save('keyboard.mp3')
+        # speech = gTTS(text="マウスモード", lang='ja')
+        # speech.save('mouse.mp3')
 
         # ===============================
         i = 0
